@@ -1,5 +1,5 @@
 Summary:	A mpc plugin for the Xfce panel
-Summary(pl.UTF-8):	Wtyczka mpc dla panelu Xfce
+Summary(pl):	Wtyczka mpc dla panelu Xfce
 Name:		xfce4-mpc-plugin
 Version:	0.3.1
 Release:	1
@@ -10,7 +10,7 @@ Source0:	http://goodies.xfce.org/releases/xfce4-mpc-plugin/%{name}-%{version}.ta
 URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	intltool >= 0.35.5
+BuildRequires:	intltool >= 0.35.0
 BuildRequires:	libmpd-devel >= 0.12
 BuildRequires:	pkgconfig
 BuildRequires:	xfce4-dev-tools >= 4.4.0
@@ -21,7 +21,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 A client plugin for the Music Player Daemon.
 
-%description -l pl.UTF-8
+%description -l pl
 Wtyczka klienta Music Player Daemon.
 
 %prep
