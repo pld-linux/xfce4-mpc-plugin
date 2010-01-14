@@ -10,6 +10,7 @@ Source0:	http://goodies.xfce.org/releases/xfce4-mpc-plugin/%{name}-%{version}.ta
 URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	gettext-devel
 BuildRequires:	intltool >= 0.35.5
 BuildRequires:	libmpd-devel >= 0.12
 BuildRequires:	pkgconfig
