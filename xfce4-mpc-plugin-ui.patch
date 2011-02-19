@@ -1,0 +1,208 @@
+From 2bb3290aa681f37bccedd3ba38f99eb62a727969 Mon Sep 17 00:00:00 2001
+From: Landry Breuil <landry@xfce.org>
+Date: Fri, 21 Jan 2011 18:29:26 +0000
+Subject: Port to libxfce4ui/libxfce4panel 4.8
+
+- depend on latest version of libs, drop dependency on libxfcegui4
+- replace old $(libexecdir)/xfce4/panel-plugins path by newer $(libdir)/xfce4/panel/plugins
+- replace xfce_themed_icon_load() by xfce_panel_pixbuf_from_source()
+- replace xfce_exec() by xfce_spawn_command_line_on_screen()
+- replace xfce_create_panel_button() by xfce_panel_create_button()
+- replace xfce_about_info_new() & friends by regular gtk_show_about_dialog()
+- fix libxfce4panel headers inclusion
+- update email in AUTHORS & comments
+---
+diff --git a/AUTHORS b/AUTHORS
+index 6035b13..3ff0490 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -1 +1 @@
+-Landry Breuil (landry at fr.homeunix.org / gaston at gcu.info)
++Landry Breuil <landry at rhaalovely.net>
+diff --git a/configure.ac b/configure.ac
+index d0c1cfb..f3fa345 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -34,10 +34,9 @@ dnl Check for standard header files
+ AC_HEADER_STDC
+ 
+ dnl configure the panel plugin
+-XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-1.0], [4.3.22])
+-XDT_CHECK_PACKAGE([LIBXFCEGUI4], [libxfcegui4-1.0], [4.3.22])
+-XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.1], [],
+-	[XDT_CHECK_PACKAGE([EXO], [exo-1], [0.5.0])])
++XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-1.0], [4.8.0])
++XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-1], [4.8.0])
++XDT_CHECK_PACKAGE([EXO], [exo-1], [0.5.0])
+ 
+ dnl check for libmpd presence
+ AC_ARG_WITH(libmpd,
+diff --git a/panel-plugin/Makefile.am b/panel-plugin/Makefile.am
+index e233a9b..a99f218 100644
+--- a/panel-plugin/Makefile.am
++++ b/panel-plugin/Makefile.am
+@@ -1,15 +1,15 @@
+-plugindir = $(libexecdir)/xfce4/panel-plugins
++plugindir = $(libdir)/xfce4/panel/plugins
+ plugin_PROGRAMS = xfce4-mpc-plugin
+ 
+ xfce4_mpc_plugin_CFLAGS =						\
+ 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
+ 	@EXO_CFLAGS@							\
+-	@LIBXFCEGUI4_CFLAGS@						\
++	@LIBXFCE4UI_CFLAGS@						\
+ 	@LIBXFCE4PANEL_CFLAGS@
+ 
+ xfce4_mpc_plugin_LDADD =						\
+ 	@EXO_LIBS@							\
+-	@LIBXFCEGUI4_LIBS@						\
++	@LIBXFCE4UI_LIBS@						\
+ 	@LIBXFCE4PANEL_LIBS@
+ 
+ 
+@@ -31,13 +31,13 @@ endif
+ desktop_in_in_files = xfce4-mpc-plugin.desktop.in.in
+ desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
+ 	
+-desktopdir = $(datadir)/xfce4/panel-plugins
++desktopdir = $(datadir)/xfce4/panel/plugins
+ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+ @INTLTOOL_DESKTOP_RULE@
+ 
+ # get full path into .desktop file
+ %.desktop.in: %.desktop.in.in
+-	sed -e "s^@PLUGIN_PATH@^$(libexecdir)/xfce4/panel-plugins^" 	\
++	sed -e "s^@PLUGIN_PATH@^$(libdir)/xfce4/panel/plugins^" 	\
+ 		$< > $@
+ 	
+ EXTRA_DIST =								\
+diff --git a/panel-plugin/xfce4-mpc-plugin.c b/panel-plugin/xfce4-mpc-plugin.c
+index bf0ae2c..35965b8 100644
+--- a/panel-plugin/xfce4-mpc-plugin.c
++++ b/panel-plugin/xfce4-mpc-plugin.c
+@@ -1,8 +1,8 @@
+ /* xfce4-mpc-plugin.c
+  *
+- * Copyright (c) 2006-2010 Landry Breuil (landry at fr.homeunix.org / gaston at gcu.info)
+- * This code is licenced under a BSD-style licence.
+- * (OpenBSD variant modeled after the ISC licence)
++ * Copyright (c) 2006-2011 Landry Breuil <landry at rhaalovely.net>
++ * This code is licensed under a BSD-style license.
++ * (OpenBSD variant modeled after the ISC license)
+  * All rights reserved.
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+@@ -22,7 +22,7 @@
+ #include <config.h>
+ #endif
+ 
+-#include <libxfcegui4/libxfcegui4.h>
++#include <libxfce4ui/libxfce4ui.h>
+ #include <exo/exo.h>
+ #include <string.h>
+ #include <stdlib.h>
+@@ -47,7 +47,7 @@ static void
+ button_set_sized_image(GtkWidget *button, gchar *icon, gint size)
+ {
+    GtkWidget *image;
+-   image = gtk_image_new_from_pixbuf(xfce_themed_icon_load(icon, size));
++   image = gtk_image_new_from_pixbuf(xfce_panel_pixbuf_from_source(icon, NULL, size));
+    gtk_button_set_image(GTK_BUTTON(button), image);
+ }
+ 
+@@ -330,7 +330,7 @@ static void
+ mpc_launch_client(GtkWidget *widget, t_mpc* mpc)
+ {
+    DBG("Going to xfce_exec(\"%s\")", mpc->client_appl);
+-   xfce_exec(mpc->client_appl, FALSE, TRUE, NULL);
++   xfce_spawn_command_line_on_screen(gdk_screen_get_default(), mpc->client_appl, FALSE, TRUE, NULL);
+ }
+ 
+ static void
+@@ -683,7 +683,7 @@ scroll_cb(GtkWidget *widget, GdkEventScroll* event, t_mpc* mpc)
+ static GtkWidget*
+ new_button_with_cbk(XfcePanelPlugin * plugin, GtkWidget *parent, gpointer cb, gpointer data)
+ {
+-   GtkWidget *button = xfce_create_panel_button();
++   GtkWidget *button = xfce_panel_create_button();
+    xfce_panel_plugin_add_action_widget (plugin, button);
+    g_signal_connect (G_OBJECT(button), "button_press_event", G_CALLBACK(cb), data);
+    gtk_box_pack_start (GTK_BOX(parent), button, TRUE, TRUE, 0);
+@@ -758,27 +758,21 @@ mpc_create (XfcePanelPlugin * plugin)
+ static void
+ mpc_show_about(XfcePanelPlugin *plugin, t_mpc* mpc)
+ {
+-   XfceAboutInfo *ainfo;
+    GdkPixbuf *icon;
+-
+-   if (mpc->about)
+-   {
+-      gtk_window_present(GTK_WINDOW(mpc->about));
+-      return;
+-   }
+-   ainfo = xfce_about_info_new(_("Xfce4 Mpc Plugin"), PACKAGE_VERSION,
+-                               _("A simple panel-plugin client for Music Player Daemon"),
+-                               _("Copyright (c) 2006-2010 Landry Breuil\n"),
+-                               XFCE_LICENSE_BSD);
+-   xfce_about_info_add_credit(ainfo, "Landry Breuil", "landry@fr.homeunix.org", _("Maintainer, Original Author"));
+-   xfce_about_info_set_homepage(ainfo, "http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin");
+-
+-   icon = xfce_themed_icon_load("xfce-multimedia", 32);
+-
+-   mpc->about = xfce_about_dialog_new_with_values(NULL, ainfo, icon);
+-   gtk_widget_show_all(mpc->about);
+-   g_signal_connect(G_OBJECT(mpc->about), "response", G_CALLBACK(gtk_widget_destroy), NULL);
+-   g_signal_connect(G_OBJECT(mpc->about), "destroy", G_CALLBACK(gtk_widget_destroyed), &mpc->about);
++   const gchar *auth[] = { "Landry Breuil <landry at rhaalovely.net>", NULL };
++   icon = xfce_panel_pixbuf_from_source("xfce-multimedia", NULL, 32);
++#if !GTK_CHECK_VERSION (2, 18, 0)
++   gtk_about_dialog_set_email_hook (exo_gtk_url_about_dialog_hook, NULL, NULL);
++   gtk_about_dialog_set_url_hook (exo_gtk_url_about_dialog_hook, NULL, NULL);
++#endif
++   gtk_show_about_dialog(NULL,
++      "logo", icon,
++      "license", xfce_get_license_text (XFCE_LICENSE_TEXT_BSD),
++      "version", PACKAGE_VERSION,
++      "comments", _("A simple panel-plugin client for Music Player Daemon"),
++      "website", "http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin",
++      "copyright", _("Copyright (c) 2006-2011 Landry Breuil\n"),
++      "authors", auth, NULL);
+ 
+    if(icon)
+       g_object_unref(G_OBJECT(icon));
+diff --git a/panel-plugin/xfce4-mpc-plugin.desktop.in.in b/panel-plugin/xfce4-mpc-plugin.desktop.in.in
+index 59288ba..77227a7 100644
+--- a/panel-plugin/xfce4-mpc-plugin.desktop.in.in
++++ b/panel-plugin/xfce4-mpc-plugin.desktop.in.in
+@@ -4,5 +4,5 @@ Encoding=UTF-8
+ _Name=MPD Client Plugin
+ _Comment=A client for MPD, The Music Player Daemon
+ Icon=xfce-multimedia
++X-XFCE-Internal=FALSE
+ X-XFCE-Exec=@PLUGIN_PATH@/xfce4-mpc-plugin
+-
+diff --git a/panel-plugin/xfce4-mpc-plugin.h b/panel-plugin/xfce4-mpc-plugin.h
+index bd41fdb..48430b3 100644
+--- a/panel-plugin/xfce4-mpc-plugin.h
++++ b/panel-plugin/xfce4-mpc-plugin.h
+@@ -1,6 +1,6 @@
+ /* xfce4-mpc-plugin.h
+  *
+- * Copyright (c) 2006-2010 Landry Breuil (landry at fr.homeunix.org / gaston at gcu.info)
++ * Copyright (c) 2006-2011 Landry Breuil <landry at rhaalovely.net>
+  * This code is licenced under a BSD-style licence.
+  * (OpenBSD variant modeled after the ISC licence)
+  * All rights reserved.
+@@ -18,9 +18,7 @@
+  */
+ 
+ #include <gtk/gtk.h>
+-#include <libxfce4panel/xfce-panel-plugin.h>
+-#include <libxfce4panel/xfce-hvbox.h>
+-#include <libxfce4panel/xfce-panel-convenience.h>
++#include <libxfce4panel/libxfce4panel.h>
+ 
+ #if HAVE_LIBMPD
+ #include <libmpd/libmpd.h>
+--
+cgit v0.8.3.4
