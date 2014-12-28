@@ -11,7 +11,7 @@ URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	exo-devel >= 0.8.0
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	intltool >= 0.35.5
 BuildRequires:	libmpd-devel >= 0.12
 BuildRequires:	libxfce4ui-devel >= 4.10.0
