@@ -1,12 +1,12 @@
 Summary:	A mpc plugin for the Xfce panel
 Summary(pl.UTF-8):	Wtyczka mpc dla panelu Xfce
 Name:		xfce4-mpc-plugin
-Version:	0.4.4
+Version:	0.4.5
 Release:	1
 License:	BSD-like
 Group:		X11/Applications
 Source0:	http://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.4/%{name}-%{version}.tar.bz2
-# Source0-md5:	1c126ca71d6db1ac6a0cc6720554e7bd
+# Source0-md5:	718e64748e46908a44cd0b96eacbda28
 URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -14,11 +14,11 @@ BuildRequires:	exo-devel >= 0.8.0
 BuildRequires:	gettext-tools
 BuildRequires:	intltool >= 0.35.5
 BuildRequires:	libmpd-devel >= 0.12
-BuildRequires:	libxfce4ui-devel >= 4.10.0
+BuildRequires:	libxfce4ui-devel >= 4.12.0
 BuildRequires:	pkgconfig
-BuildRequires:	xfce4-dev-tools >= 4.10.0
-BuildRequires:	xfce4-panel-devel >= 4.10.0
-Requires:	xfce4-panel >= 4.10.0
+BuildRequires:	xfce4-dev-tools >= 4.12.0
+BuildRequires:	xfce4-panel-devel >= 4.12.0
+Requires:	xfce4-panel >= 4.12.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -32,6 +32,7 @@ Wtyczka klienta Music Player Daemon.
 
 %build
 %{__intltoolize}
+%{__libtoolize}
 %{__aclocal}
 %{__autoconf}
 %{__autoheader}
