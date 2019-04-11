@@ -1,12 +1,12 @@
 Summary:	A mpc plugin for the Xfce panel
 Summary(pl.UTF-8):	Wtyczka mpc dla panelu Xfce
 Name:		xfce4-mpc-plugin
-Version:	0.4.5
+Version:	0.5.1
 Release:	1
 License:	BSD-like
 Group:		X11/Applications
-Source0:	http://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.4/%{name}-%{version}.tar.bz2
-# Source0-md5:	718e64748e46908a44cd0b96eacbda28
+Source0:	http://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.5/%{name}-%{version}.tar.bz2
+# Source0-md5:	305dfdacb2b2198e1f1673d61f86e4f5
 URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
