@@ -1,12 +1,12 @@
 Summary:	A mpc plugin for the Xfce panel
 Summary(pl.UTF-8):	Wtyczka mpc dla panelu Xfce
 Name:		xfce4-mpc-plugin
-Version:	0.5.1
+Version:	0.5.2
 Release:	1
 License:	BSD-like
 Group:		X11/Applications
 Source0:	http://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.5/%{name}-%{version}.tar.bz2
-# Source0-md5:	305dfdacb2b2198e1f1673d61f86e4f5
+# Source0-md5:	26a1e8658df2b51967dc2250e23f467d
 URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -14,11 +14,11 @@ BuildRequires:	exo-devel >= 0.8.0
 BuildRequires:	gettext-tools
 BuildRequires:	intltool >= 0.35.5
 BuildRequires:	libmpd-devel >= 0.12
-BuildRequires:	libxfce4ui-devel >= 4.12.0
+BuildRequires:	libxfce4ui-devel >= 4.14.0
 BuildRequires:	pkgconfig
-BuildRequires:	xfce4-dev-tools >= 4.12.0
-BuildRequires:	xfce4-panel-devel >= 4.12.0
-Requires:	xfce4-panel >= 4.12.0
+BuildRequires:	xfce4-dev-tools >= 4.14.0
+BuildRequires:	xfce4-panel-devel >= 4.14.0
+Requires:	xfce4-panel >= 4.14.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -49,6 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/xfce4/panel/plugins/*.la
 
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ie
+%{__mv} $RPM_BUILD_ROOT%{_datadir}/locale/{hy_AM,hy}
 
 %find_lang %{name}
 
