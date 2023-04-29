@@ -1,13 +1,13 @@
 Summary:	A mpc plugin for the Xfce panel
 Summary(pl.UTF-8):	Wtyczka mpc dla panelu Xfce
 Name:		xfce4-mpc-plugin
-Version:	0.5.2
+Version:	0.5.3
 Release:	1
 License:	BSD-like
 Group:		X11/Applications
-Source0:	http://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.5/%{name}-%{version}.tar.bz2
-# Source0-md5:	26a1e8658df2b51967dc2250e23f467d
-URL:		http://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
+Source0:	https://archive.xfce.org/src/panel-plugins/xfce4-mpc-plugin/0.5/%{name}-%{version}.tar.bz2
+# Source0-md5:	e27cce631114eb9974669d3521198fb4
+URL:		https://goodies.xfce.org/projects/panel-plugins/xfce4-mpc-plugin
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	exo-devel >= 0.8.0
@@ -48,8 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/xfce4/panel/plugins/*.la
 
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ie
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{hye,ie,ur_PK}
 %{__mv} $RPM_BUILD_ROOT%{_datadir}/locale/{hy_AM,hy}
 
 %find_lang %{name}
@@ -59,6 +58,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README TODO
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_libdir}/xfce4/panel/plugins/libmpc.so
 %{_datadir}/xfce4/panel/plugins/xfce4-mpc-plugin.desktop
